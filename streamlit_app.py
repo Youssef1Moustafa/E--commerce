@@ -29,7 +29,30 @@ city_mapping = {
     'SP': ['São Paulo', 'Campinas', 'Santo André'],
     'RJ': ['Rio de Janeiro', 'Niterói', 'Petropolis'],
     'MG': ['Belo Horizonte', 'Uberlândia', 'Contagem'],
-    # Add more mappings...
+    'SC': ['Florianópolis', 'Joinville', 'Blumenau'],
+    'ES': ['Vitória', 'Vila Velha', 'Serra'],
+    'RN': ['Natal', 'Mossoró', 'Caicó'],
+    'BA': ['Salvador', 'Feira de Santana', 'Itabuna'],
+    'DF': ['Brasília', 'Gama', 'Taguatinga'],
+    'RS': ['Porto Alegre', 'Canoas', 'Pelotas'],
+    'PE': ['Recife', 'Olinda', 'Caruaru'],
+    'GO': ['Goiânia', 'Aparecida de Goiânia', 'Anápolis'],
+    'CE': ['Fortaleza', 'Caucaia', 'Juazeiro do Norte'],
+    'PR': ['Curitiba', 'Londrina', 'Maringá'],
+    'MA': ['São Luís', 'Imperatriz', 'Caxias'],
+    'PI': ['Teresina', 'Parnaíba', 'Picos'],
+    'MT': ['Cuiabá', 'Várzea Grande', 'Rondonópolis'],
+    'MS': ['Campo Grande', 'Dourados', 'Três Lagoas'],
+    'SE': ['Aracaju', 'Nossa Senhora do Socorro', 'Lagarto'],
+    'RO': ['Porto Velho', 'Ji-Paraná', 'Ariquemes'],
+    'TO': ['Palmas', 'Araguaína', 'Gurupi'],
+    'AM': ['Manaus', 'Parintins', 'Itacoatiara'],
+    'AP': ['Macapá', 'Santana', 'Laranjal do Jari'],
+    'PB': ['João Pessoa', 'Campina Grande', 'Patos'],
+    'PA': ['Belém', 'Ananindeua', 'Marabá'],
+    'AL': ['Maceió', 'Arapiraca', 'Palmeira dos Índios'],
+    'AC': ['Rio Branco', 'Cruzeiro do Sul', 'Senador Guiomard'],
+    'RR': ['Boa Vista', 'Rorainópolis', 'Caracaraí']
 }
 
 # Create a dictionary mapping product categories to category names
