@@ -96,18 +96,22 @@ with st.form("feature_input_form"):
 # Only proceed with prediction if the form is submitted
 if submitted:
     try:
-        # Ensure input data matches the model's expected format
+        # Prepare input for prediction
         input_values = list(input_data.values())
-        
+
         # Apply Label Encoding on categorical inputs if needed
         label_encoder = LabelEncoder()
-        for feature in ['customer_state', 'customer_city', 'product_category', 'product_category_name']:
-            input_values[features.index(feature)] = label_encoder.fit_transform([input_data[feature]])[0]
 
-        # Create a 2D array for prediction
-        input_array = np.array([input_values])
+        # Transform categorical variables
+        input_values[features.index('customer_state')] = label_encoder.fit_transform([input_data['customer_state']])[0]
+        input_values[features.index('customer_city')] = label_encoder.fit_transform([input_data['customer_city']])[0]
+        input_values[features.index('product_category')] = label_encoder.fit_transform([input_data['product_category']])[0]
+        input_values[features.index('product_category_name')] = label_encoder.fit_transform([input_data['product_category_name']])[0]
 
-        # Ensure the model is predicting correctly
+        # Convert input to a numpy array with correct dtype
+        input_array = np.array([input_values], dtype=float)
+
+        # Make prediction
         prediction = model.predict(input_array)
 
         # Output prediction results
