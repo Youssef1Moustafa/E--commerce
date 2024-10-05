@@ -2,6 +2,8 @@ import os
 import streamlit as st
 import pickle
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
+
 
 # File path to your model and features
 file_path = 'delivered_days.pkl'
@@ -117,13 +119,20 @@ with st.form("feature_input_form"):
     # Submit button to make predictions
     submitted = st.form_submit_button("Predict")
 
-# Only proceed with prediction if the form is submitted
 if submitted:
     try:
-        # Ensure that input_data is converted to a 2D array
+        # Encode categorical features
+        label_encoders = {}
+        for feature in ['customer_state', 'customer_city', 'product_category', 'product_category_name']:
+            le = LabelEncoder()
+            le.fit(input_data[feature])
+            input_data[feature] = le.transform([input_data[feature]])[0]
+            label_encoders[feature] = le
+
+        # Convert the input dictionary to a 2D numpy array (required for prediction)
         input_array = np.array([list(input_data.values())])
 
-        # Ensure the model is predicting correctly
+        # Make prediction
         prediction = model.predict(input_array)
 
         # Output prediction results
