@@ -1,3 +1,6 @@
 streamlit
 pandas
-xgboost
+XGBoost
+scikit-learn
+Pickle
+Imbalanced-Learn
