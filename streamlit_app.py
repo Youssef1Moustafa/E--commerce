@@ -58,7 +58,7 @@ with st.form("feature_input_form"):
 
     # Feature 4: 'product_category', 'product_category_name'
     st.subheader('Product Information')
-    product_category = st.selectbox("Product Category", ['Electronics', 'Apparel', 'Home', 'Books', 'Other'])
+    product_category = st.selectbox("Product Category", ['L', 'M', 'S'])
     product_category_name = st.text_input("Product Category Name", "Enter the product category name")
 
     input_data['product_category'] = product_category
