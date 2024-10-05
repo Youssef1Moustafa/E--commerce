@@ -2,7 +2,6 @@ import os
 import streamlit as st
 import pickle
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
 
 # Load the model
 file_path = 'delivered_days.pkl'
@@ -17,6 +16,24 @@ else:
 # Extract the model and feature names
 model = model_data['model']
 features = model_data['features']
+
+# Load the label encoders
+def load_label_encoder(encoder_path):
+    try:
+        with open(encoder_path, 'rb') as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        st.error("Label encoder file not found. Please check the path.")
+        st.stop()
+    except Exception as e:
+        st.error(f"Error loading label encoder: {str(e)}")
+        st.stop()
+
+# Load encoders
+state_encoder = load_label_encoder('state_encoder.pkl')  # Save this earlier
+city_encoder = load_label_encoder('city_encoder.pkl')    # Save this earlier
+category_encoder = load_label_encoder('category_encoder.pkl')  # Save this earlier
+category_name_encoder = load_label_encoder('category_name_encoder.pkl')  # Save this earlier
 
 # Title of the page
 st.title("Delivered Days Prediction")
@@ -99,14 +116,11 @@ if submitted:
         # Prepare input for prediction
         input_values = list(input_data.values())
 
-        # Apply Label Encoding on categorical inputs if needed
-        label_encoder = LabelEncoder()
-
-        # Transform categorical variables
-        input_values[features.index('customer_state')] = label_encoder.fit_transform([input_data['customer_state']])[0]
-        input_values[features.index('customer_city')] = label_encoder.fit_transform([input_data['customer_city']])[0]
-        input_values[features.index('product_category')] = label_encoder.fit_transform([input_data['product_category']])[0]
-        input_values[features.index('product_category_name')] = label_encoder.fit_transform([input_data['product_category_name']])[0]
+        # Transform categorical variables using the loaded encoders
+        input_values[features.index('customer_state')] = state_encoder.transform([input_data['customer_state']])[0]
+        input_values[features.index('customer_city')] = city_encoder.transform([input_data['customer_city']])[0]
+        input_values[features.index('product_category')] = category_encoder.transform([input_data['product_category']])[0]
+        input_values[features.index('product_category_name')] = category_name_encoder.transform([input_data['product_category_name']])[0]
 
         # Convert input to a numpy array with correct dtype
         input_array = np.array([input_values], dtype=float)
