@@ -1,151 +1,95 @@
+import os
 import streamlit as st
-import pandas as pd
-import math
-from pathlib import Path
+import pickle
+import numpy as np
 
-# Set the title and favicon that appear in the Browser's tab bar.
-st.set_page_config(
-    page_title='GDP dashboard',
-    page_icon=':earth_americas:', # This is an emoji shortcode. Could be a URL too.
-)
+# File path to your model and features
+file_path = 'model_features.pkl'
 
-# -----------------------------------------------------------------------------
-# Declare some useful functions.
+# Check if the file exists
+if os.path.exists(file_path):
+    with open(file_path, 'rb') as file:
+        model_data = pickle.load(file)
+else:
+    st.error(f"File {file_path} not found. Please ensure the file is in the correct location.")
+    st.stop()
 
-@st.cache_data
-def get_gdp_data():
-    """Grab GDP data from a CSV file.
+# Extract the model and feature names
+model = model_data['model']
+features = model_data['features']
 
-    This uses caching to avoid having to read the file every time. If we were
-    reading from an HTTP endpoint instead of a file, it's a good idea to set
-    a maximum age to the cache with the TTL argument: @st.cache_data(ttl='1d')
-    """
+# Title of the page
+st.title("Order Status Prediction")
 
-    # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
-    raw_gdp_df = pd.read_csv(DATA_FILENAME)
+# Create a sidebar navigation for feature input
+st.sidebar.title("Navigation")
 
-    MIN_YEAR = 1960
-    MAX_YEAR = 2022
+# A dictionary to store user input for each feature
+input_data = {}
 
-    # The data above has columns like:
-    # - Country Name
-    # - Country Code
-    # - [Stuff I don't care about]
-    # - GDP for 1960
-    # - GDP for 1961
-    # - GDP for 1962
-    # - ...
-    # - GDP for 2022
-    #
-    # ...but I want this instead:
-    # - Country Name
-    # - Country Code
-    # - Year
-    # - GDP
-    #
-    # So let's pivot all those year-columns into two: Year and GDP
-    gdp_df = raw_gdp_df.melt(
-        ['Country Code'],
-        [str(x) for x in range(MIN_YEAR, MAX_YEAR + 1)],
-        'Year',
-        'GDP',
-    )
+# Define the form for taking feature inputs
+with st.form("feature_input_form"):
+    
+    # Feature 1: 'customer_state'
+    st.subheader('Customer Information')
+    customer_state = st.selectbox("Customer State", ['NY', 'CA', 'TX', 'FL', 'Other'])
+    input_data['customer_state'] = customer_state
 
-    # Convert years from string to integers
-    gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
+    customer_city = st.text_input("Customer City", "Enter the city")
+    input_data['customer_city'] = customer_city
 
-    return gdp_df
+    # Feature 2: 'order_purchase_year', 'order_purchase_month', 'order_purchase_day'
+    st.subheader('Order Details')
+    order_purchase_year = st.number_input("Order Purchase Year", min_value=2000, max_value=2023, value=2022)
+    order_purchase_month = st.number_input("Order Purchase Month", min_value=1, max_value=12, value=1)
+    order_purchase_day = st.number_input("Order Purchase Day", min_value=1, max_value=31, value=1)
 
-gdp_df = get_gdp_data()
+    input_data['order_purchase_year'] = order_purchase_year
+    input_data['order_purchase_month'] = order_purchase_month
+    input_data['order_purchase_day'] = order_purchase_day
 
-# -----------------------------------------------------------------------------
-# Draw the actual page
+    # Feature 3: 'order_estimated_delivery_month', 'order_estimated_delivery_day'
+    st.subheader('Estimated Delivery')
+    order_estimated_delivery_month = st.number_input("Estimated Delivery Month", min_value=1, max_value=12, value=1)
+    order_estimated_delivery_day = st.number_input("Estimated Delivery Day", min_value=1, max_value=31, value=1)
 
-# Set the title that appears at the top of the page.
-'''
-# :earth_americas: GDP dashboard
+    input_data['order_estimated_delivery_month'] = order_estimated_delivery_month
+    input_data['order_estimated_delivery_day'] = order_estimated_delivery_day
 
-Browse GDP data from the [World Bank Open Data](https://data.worldbank.org/) website. As you'll
-notice, the data only goes to 2022 right now, and datapoints for certain years are often missing.
-But it's otherwise a great (and did I mention _free_?) source of data.
-'''
+    # Feature 4: 'product_category', 'product_category_name'
+    st.subheader('Product Information')
+    product_category = st.selectbox("Product Category", ['Electronics', 'Apparel', 'Home', 'Books', 'Other'])
+    product_category_name = st.text_input("Product Category Name", "Enter the product category name")
 
-# Add some spacing
-''
-''
+    input_data['product_category'] = product_category
+    input_data['product_category_name'] = product_category_name
 
-min_value = gdp_df['Year'].min()
-max_value = gdp_df['Year'].max()
+    # Feature 5: 'discount', 'REV_gift_log', 'REV_gift_percent', 'price_log'
+    st.subheader('Price & Discount Information')
+    discount = st.number_input("Discount (%)", min_value=0.0, max_value=100.0, value=10.0)
+    rev_gift_log = st.number_input("Revenue Gift Log", min_value=0.0, max_value=10.0, value=1.0)
+    rev_gift_percent = st.number_input("Revenue Gift Percent (%)", min_value=0.0, max_value=100.0, value=5.0)
+    price_log = st.number_input("Price Log", min_value=0.0, max_value=10.0, value=3.0)
 
-from_year, to_year = st.slider(
-    'Which years are you interested in?',
-    min_value=min_value,
-    max_value=max_value,
-    value=[min_value, max_value])
+    input_data['discount'] = discount
+    input_data['REV_gift_log'] = rev_gift_log
+    input_data['REV_gift_percent'] = rev_gift_percent
+    input_data['price_log'] = price_log
 
-countries = gdp_df['Country Code'].unique()
+    # Submit button to make predictions
+    submitted = st.form_submit_button("Predict")
 
-if not len(countries):
-    st.warning("Select at least one country")
+# Only proceed with prediction if the form is submitted
+if submitted:
+    try:
+        # Convert the input dictionary to a 2D numpy array (required for prediction)
+        input_array = np.array([list(input_data.values())])
 
-selected_countries = st.multiselect(
-    'Which countries would you like to view?',
-    countries,
-    ['DEU', 'FRA', 'GBR', 'BRA', 'MEX', 'JPN'])
+        # Make prediction
+        prediction = model.predict(input_array)
 
-''
-''
-''
+        # Output prediction results
+        st.success(f"Prediction: {'Order Delivered' if prediction[0] == 'delivered' else 'Other Status'}")
 
-# Filter the data
-filtered_gdp_df = gdp_df[
-    (gdp_df['Country Code'].isin(selected_countries))
-    & (gdp_df['Year'] <= to_year)
-    & (from_year <= gdp_df['Year'])
-]
-
-st.header('GDP over time', divider='gray')
-
-''
-
-st.line_chart(
-    filtered_gdp_df,
-    x='Year',
-    y='GDP',
-    color='Country Code',
-)
-
-''
-''
-
-
-first_year = gdp_df[gdp_df['Year'] == from_year]
-last_year = gdp_df[gdp_df['Year'] == to_year]
-
-st.header(f'GDP in {to_year}', divider='gray')
-
-''
-
-cols = st.columns(4)
-
-for i, country in enumerate(selected_countries):
-    col = cols[i % len(cols)]
-
-    with col:
-        first_gdp = first_year[first_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-        last_gdp = last_year[last_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-
-        if math.isnan(first_gdp):
-            growth = 'n/a'
-            delta_color = 'off'
-        else:
-            growth = f'{last_gdp / first_gdp:,.2f}x'
-            delta_color = 'normal'
-
-        st.metric(
-            label=f'{country} GDP',
-            value=f'{last_gdp:,.0f}B',
-            delta=growth,
-            delta_color=delta_color
-        )
+    except Exception as e:
+        st.error(f"Error making prediction: {e}")
