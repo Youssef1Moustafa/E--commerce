@@ -33,9 +33,11 @@ city_mapping = {
 
 # Create a dictionary mapping product categories to category names
 product_mapping = {
-    'L': ['toys', 'watches_gifts', 'construction_tools_garden'],
+   product_mapping = {
+    'L': ['toys', 'watches_gifts', 'costruction_tools_garden'],
     'M': ['bed_bath_table', 'auto', 'health_beauty'],
-    # Add more categories as needed
+    'S': ['cool_stuff', 'garden_tools', 'furniture_decor'],
+
 }
 
 # A dictionary to store user input for each feature
