@@ -43,8 +43,8 @@ st.title("E-commerce Prediction App")
 
 # Example input data (replace this with your actual input method)
 input_data = pd.DataFrame({
-    'customer_state': ['SP', 'RJ', 'MG', 'SC', 'ES', 'RN', 'BA', 'DF', 'RS', 'PE', 'GO',
-       'CE', 'PR', 'MA', 'PI', 'MT', 'MS', 'SE', 'RO', 'TO', 'AM', 'AP',
+    'customer_state': ['SP', 'RJ', 'MG', 'SC', 'ES', 'RN', 'BA', 'DF', 'RS', 'PE', 
+       'GO', 'CE', 'PR', 'MA', 'PI', 'MT', 'MS', 'SE', 'RO', 'TO', 'AM', 'AP',
        'PB', 'PA', 'AL', 'AC', 'RR']
 })
 
