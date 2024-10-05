@@ -29,30 +29,15 @@ city_mapping = {
     'SP': ['São Paulo', 'Campinas', 'Santo André'],
     'RJ': ['Rio de Janeiro', 'Niterói', 'Petropolis'],
     'MG': ['Belo Horizonte', 'Uberlândia', 'Contagem'],
-    'SC': ['Florianópolis', 'Joinville', 'Blumenau'],
-    'ES': ['Vitória', 'Vila Velha', 'Serra'],
-    'RN': ['Natal', 'Mossoró', 'Caicó'],
-    'BA': ['Salvador', 'Feira de Santana', 'Itabuna'],
-    'DF': ['Brasília', 'Gama', 'Taguatinga'],
-    'RS': ['Porto Alegre', 'Canoas', 'Pelotas'],
-    'PE': ['Recife', 'Olinda', 'Caruaru'],
-    'GO': ['Goiânia', 'Aparecida de Goiânia', 'Anápolis'],
-    'CE': ['Fortaleza', 'Caucaia', 'Juazeiro do Norte'],
-    'PR': ['Curitiba', 'Londrina', 'Maringá'],
-    'MA': ['São Luís', 'Imperatriz', 'Caxias'],
-    'PI': ['Teresina', 'Parnaíba', 'Picos'],
-    'MT': ['Cuiabá', 'Várzea Grande', 'Rondonópolis'],
-    'MS': ['Campo Grande', 'Dourados', 'Três Lagoas'],
-    'SE': ['Aracaju', 'Nossa Senhora do Socorro', 'Lagarto'],
-    'RO': ['Porto Velho', 'Ji-Paraná', 'Ariquemes'],
-    'TO': ['Palmas', 'Araguaína', 'Gurupi'],
-    'AM': ['Manaus', 'Parintins', 'Itacoatiara'],
-    'AP': ['Macapá', 'Santana', 'Laranjal do Jari'],
-    'PB': ['João Pessoa', 'Campina Grande', 'Patos'],
-    'PA': ['Belém', 'Ananindeua', 'Marabá'],
-    'AL': ['Maceió', 'Arapiraca', 'Palmeira dos Índios'],
-    'AC': ['Rio Branco', 'Cruzeiro do Sul', 'Senador Guiomard'],
-    'RR': ['Boa Vista', 'Rorainópolis', 'Caracaraí']
+    # Add more mappings...
+}
+
+# Create a dictionary mapping product categories to category names
+product_mapping = {
+    'L': ['toys', 'watches_gifts', 'costruction_tools_garden'],
+    'M': ['bed_bath_table', 'auto', 'health_beauty'],
+    'S': ['cool_stuff', 'garden_tools', 'furniture_decor'],
+    # Add more mappings...
 }
 
 # A dictionary to store user input for each feature
@@ -60,16 +45,13 @@ input_data = {}
 
 # Define the form for taking feature inputs
 with st.form("feature_input_form"):
-    
-    
     # Feature 1: 'customer_state'
     st.subheader('Customer Information')
-    customer_state = st.selectbox("Customer State", ['SP', 'RJ', 'MG', 'SC', 'ES', 'RN', 'BA', 'DF', 'RS', 'PE', 'GO',
-       'CE', 'PR', 'MA', 'PI', 'MT', 'MS', 'SE', 'RO', 'TO', 'AM', 'AP',
-       'PB', 'PA', 'AL', 'AC', 'RR'])
+    customer_state = st.selectbox("Customer State", list(city_mapping.keys()))
     input_data['customer_state'] = customer_state
 
-    customer_city = st.text_input("Customer City", "Enter the city")
+    # Dynamically select cities based on the selected state
+    customer_city = st.selectbox("Customer City", city_mapping[customer_state])
     input_data['customer_city'] = customer_city
 
     # Feature 2: 'order_purchase_year', 'order_purchase_month', 'order_purchase_day'
@@ -92,8 +74,8 @@ with st.form("feature_input_form"):
 
     # Feature 4: 'product_category', 'product_category_name'
     st.subheader('Product Information')
-    product_category = st.selectbox("Product Category", ['L', 'M', 'S'])
-    product_category_name = st.text_input("Product Category Name", "Enter the product category name")
+    product_category = st.selectbox("Product Category", list(product_mapping.keys()))
+    product_category_name = st.selectbox("Product Category Name", product_mapping[product_category])
 
     input_data['product_category'] = product_category
     input_data['product_category_name'] = product_category_name
