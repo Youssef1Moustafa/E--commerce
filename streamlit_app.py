@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier  # or whichever model you're using
 
 # Load your trained model and label encoders
-with open('model.pkl', 'rb') as model_file:
+with open('delivered_days.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
 with open('delivered_days.pkl', 'rb') as f:
