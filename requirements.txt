@@ -3,4 +3,4 @@ pandas
 xgboost
 scikit-learn
 Pickle
-Imbalanced-Learn
+imbalanced-learn
