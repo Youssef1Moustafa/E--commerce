@@ -2,52 +2,128 @@ import os
 import streamlit as st
 import pickle
 import numpy as np
-import pandas as pd
-from xgboost import XGBClassifier
 
-# Load your DataFrame
-df = pd.read_csv('your_data_file.csv')  # Replace with your actual data file path
+# File path to your model and features
+file_path = 'delivered_days.pkl'
 
-# Load the model and features
-@st.cache(allow_output_mutation=True)
-def load_model():
-    with open('delivered_days.pkl', 'rb') as model_file:
-        loaded_model_data = pickle.load(model_file)
-    return loaded_model_data['model'], loaded_model_data['features']
+# Check if the file exists
+if os.path.exists(file_path):
+    with open(file_path, 'rb') as file:
+        model_data = pickle.load(file)
+else:
+    st.error(f"File {file_path} not found. Please ensure the file is in the correct location.")
+    st.stop()
 
-# Load model and features
-loaded_model, loaded_features = load_model()
+# Extract the model and feature names
+model = model_data['model']
+features = model_data['features']
 
-st.title("Order Status Prediction")
+# Title of the page
+st.title("Delivered days Prediction")
 
-# Create a dictionary to hold input data
+# Create a sidebar navigation for feature input
+st.sidebar.title("Navigation")
+
+# Create a dictionary mapping states to cities
+city_mapping = {
+    'SP': ['São Paulo', 'Campinas', 'Santo André'],
+    'RJ': ['Rio de Janeiro', 'Niterói', 'Petropolis'],
+    'MG': ['Belo Horizonte', 'Uberlândia', 'Contagem'],
+    'SC': ['Florianópolis', 'Joinville', 'Blumenau'],
+    'ES': ['Vitória', 'Vila Velha', 'Serra'],
+    'RN': ['Natal', 'Mossoró', 'Caicó'],
+    'BA': ['Salvador', 'Feira de Santana', 'Itabuna'],
+    'DF': ['Brasília', 'Gama', 'Taguatinga'],
+    'RS': ['Porto Alegre', 'Canoas', 'Pelotas'],
+    'PE': ['Recife', 'Olinda', 'Caruaru'],
+    'GO': ['Goiânia', 'Aparecida de Goiânia', 'Anápolis'],
+    'CE': ['Fortaleza', 'Caucaia', 'Juazeiro do Norte'],
+    'PR': ['Curitiba', 'Londrina', 'Maringá'],
+    'MA': ['São Luís', 'Imperatriz', 'Caxias'],
+    'PI': ['Teresina', 'Parnaíba', 'Picos'],
+    'MT': ['Cuiabá', 'Várzea Grande', 'Rondonópolis'],
+    'MS': ['Campo Grande', 'Dourados', 'Três Lagoas'],
+    'SE': ['Aracaju', 'Nossa Senhora do Socorro', 'Lagarto'],
+    'RO': ['Porto Velho', 'Ji-Paraná', 'Ariquemes'],
+    'TO': ['Palmas', 'Araguaína', 'Gurupi'],
+    'AM': ['Manaus', 'Parintins', 'Itacoatiara'],
+    'AP': ['Macapá', 'Santana', 'Laranjal do Jari'],
+    'PB': ['João Pessoa', 'Campina Grande', 'Patos'],
+    'PA': ['Belém', 'Ananindeua', 'Marabá'],
+    'AL': ['Maceió', 'Arapiraca', 'Palmeira dos Índios'],
+    'AC': ['Rio Branco', 'Cruzeiro do Sul', 'Senador Guiomard'],
+    'RR': ['Boa Vista', 'Rorainópolis', 'Caracaraí']
+}
+
+# A dictionary to store user input for each feature
 input_data = {}
 
-# Feature 1: 'customer_state'
-st.subheader('Customer Information')
-customer_state = st.selectbox("Customer State", df['customer_state'].unique().tolist())
-input_data['customer_state'] = customer_state
+# Define the form for taking feature inputs
+with st.form("feature_input_form"):
+    
+    
+    # Feature 1: 'customer_state'
+    st.subheader('Customer Information')
+    customer_state = st.selectbox("Customer State", ['SP', 'RJ', 'MG', 'SC', 'ES', 'RN', 'BA', 'DF', 'RS', 'PE', 'GO',
+       'CE', 'PR', 'MA', 'PI', 'MT', 'MS', 'SE', 'RO', 'TO', 'AM', 'AP',
+       'PB', 'PA', 'AL', 'AC', 'RR'])
+    input_data['customer_state'] = customer_state
 
-# Continue creating input fields for other features
-for feature in loaded_features:
-    if feature != 'customer_state':  # Skip if it's already added
-        if feature in ['product_category_name']:  # Example for categorical features
-            value = st.selectbox(feature, options=["Option 1", "Option 2"])  # Replace with actual options
-        else:  # Numerical features
-            value = st.number_input(feature, min_value=0.0, value=1.0)  # Adjust min/max values as needed
-        input_data[feature] = value
+    customer_city = st.text_input("Customer City", "Enter the city")
+    input_data['customer_city'] = customer_city
 
-# Convert input_data to a DataFrame to ensure correct types
-input_df = pd.DataFrame([input_data])
+    # Feature 2: 'order_purchase_year', 'order_purchase_month', 'order_purchase_day'
+    st.subheader('Order Details')
+    order_purchase_year = st.number_input("Order Purchase Year", min_value=2000, max_value=2023, value=2022)
+    order_purchase_month = st.number_input("Order Purchase Month", min_value=1, max_value=12, value=1)
+    order_purchase_day = st.number_input("Order Purchase Day", min_value=1, max_value=31, value=1)
 
-# Make prediction using the loaded model
-if st.button('Predict'):
+    input_data['order_purchase_year'] = order_purchase_year
+    input_data['order_purchase_month'] = order_purchase_month
+    input_data['order_purchase_day'] = order_purchase_day
+
+    # Feature 3: 'order_estimated_delivery_month', 'order_estimated_delivery_day'
+    st.subheader('Estimated Delivery')
+    order_estimated_delivery_month = st.number_input("Estimated Delivery Month", min_value=1, max_value=12, value=1)
+    order_estimated_delivery_day = st.number_input("Estimated Delivery Day", min_value=1, max_value=31, value=1)
+
+    input_data['order_estimated_delivery_month'] = order_estimated_delivery_month
+    input_data['order_estimated_delivery_day'] = order_estimated_delivery_day
+
+    # Feature 4: 'product_category', 'product_category_name'
+    st.subheader('Product Information')
+    product_category = st.selectbox("Product Category", ['L', 'M', 'S'])
+    product_category_name = st.text_input("Product Category Name", "Enter the product category name")
+
+    input_data['product_category'] = product_category
+    input_data['product_category_name'] = product_category_name
+
+    # Feature 5: 'discount', 'REV_gift_log', 'REV_gift_percent', 'price_log'
+    st.subheader('Price & Discount Information')
+    discount = st.number_input("Discount (%)", min_value=0.0, max_value=100.0, value=10.0)
+    rev_gift_log = st.number_input("Revenue Gift Log", min_value=0.0, max_value=10.0, value=1.0)
+    rev_gift_percent = st.number_input("Revenue Gift Percent (%)", min_value=0.0, max_value=100.0, value=5.0)
+    price_log = st.number_input("Price Log", min_value=0.0, max_value=10.0, value=3.0)
+
+    input_data['discount'] = discount
+    input_data['REV_gift_log'] = rev_gift_log
+    input_data['REV_gift_percent'] = rev_gift_percent
+    input_data['price_log'] = price_log
+
+    # Submit button to make predictions
+    submitted = st.form_submit_button("Predict")
+
+# Only proceed with prediction if the form is submitted
+if submitted:
     try:
-        # Ensure categorical features are encoded correctly if needed
-        input_df['customer_state'] = input_df['customer_state'].astype(str)  # Convert to string if needed
-        # Add more encoding if necessary
+        # Convert the input dictionary to a 2D numpy array (required for prediction)
+        input_array = np.array([list(input_data.values())])
 
-        prediction = loaded_model.predict(input_df)  # Use the DataFrame directly for prediction
-        st.write("Prediction:", "Delivered" if prediction[0] == 1 else "Not Delivered")
+        # Make prediction
+        prediction = model.predict(input_array)
+
+        # Output prediction results
+        st.success(f"Prediction: {'Order Delivered' if prediction[0] == 'delivered' else 'Other Status'}")
+
     except Exception as e:
         st.error(f"Error making prediction: {e}")
