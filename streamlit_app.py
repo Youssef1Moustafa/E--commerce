@@ -32,7 +32,6 @@ city_mapping = {
 }
 
 # Create a dictionary mapping product categories to category names
-product_mapping = {
    product_mapping = {
     'L': ['toys', 'watches_gifts', 'costruction_tools_garden'],
     'M': ['bed_bath_table', 'auto', 'health_beauty'],
