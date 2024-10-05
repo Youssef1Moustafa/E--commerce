@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 
 # File path to your model and features
-file_path = 'model_features.pkl'
+file_path = 'delivered_days.pkl'
 
 # Check if the file exists
 if os.path.exists(file_path):
@@ -19,7 +19,7 @@ model = model_data['model']
 features = model_data['features']
 
 # Title of the page
-st.title("Order Status Prediction")
+st.title("Delivered days Prediction")
 
 # Create a sidebar navigation for feature input
 st.sidebar.title("Navigation")
