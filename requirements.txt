@@ -1,6 +1,6 @@
 streamlit
 pandas
-XGBoost
+xgboost
 scikit-learn
 Pickle
 Imbalanced-Learn
