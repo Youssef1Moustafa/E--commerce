@@ -1,53 +1,76 @@
-import numpy as np
-import pandas as pd
 import streamlit as st
+import pandas as pd
+import numpy as np
 import pickle
 from sklearn.preprocessing import LabelEncoder
+from xgboost import XGBClassifier  # or whichever model you're using
 
-# Load the trained model and label encoder
-# Note: Replace 'model.pkl' with your actual model file
+# Load your trained model and label encoders
 with open('model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
-# Load the label encoders for any categorical variables you may need
 with open('delivered_days.pkl', 'rb') as f:
     label_encoder_customer_state = pickle.load(f)
 
-# Function to make predictions and convert to labels
-def make_predictions(input_data):
-    # Assuming input_data is a DataFrame structured the same as your training data
-    predictions = model.predict(input_data)  # Get predictions
-    label_mapping = {0: 'L', 1: 'M', 2: 'S'}  # Mapping from numerical to class labels
-    predicted_labels = [label_mapping[pred] for pred in predictions]  # Convert to labels
-    return predicted_labels
+# Define a function to preprocess the input data
+def preprocess_input_data(input_data):
+    # Apply log transformation
+    input_data['product_volume_log'] = np.log1p(input_data['product_volume'])
+    input_data['Duration_approved_log'] = np.log1p(input_data['Duration_approved'])
+    input_data['product_weight_g_log'] = np.log1p(input_data['product_weight_g'])
+    input_data['REV_Tax_percent_log'] = np.log1p(input_data['REV_Tax_percent'])
+    input_data['Revenue_log'] = np.log1p(input_data['Revenue'])
+    input_data['REV_gift_log'] = np.log1p(input_data['REV_gift'])
+    input_data['REV_Tax_log'] = np.log1p(input_data['REV_Tax'])
+    input_data['REV_Bank_fees_log'] = np.log1p(input_data['REV_Bank_fees'])
+    input_data['price_log'] = np.log1p(input_data['price'])
+    input_data['payment_value_log'] = np.log1p(input_data['payment_value'])
 
-# Streamlit UI
+    # Encode categorical variables
+    input_data['customer_state'] = label_encoder_customer_state.transform(input_data['customer_state'])
+    # Add other label encodings as necessary...
+
+    return input_data
+
+# Streamlit user inputs
 st.title("Order Status Prediction")
+product_volume = st.number_input("Product Volume")
+duration_approved = st.number_input("Duration Approved")
+product_weight_g = st.number_input("Product Weight (g)")
+rev_tax_percent = st.number_input("Revenue Tax Percentage")
+revenue = st.number_input("Revenue")
+rev_gift = st.number_input("Revenue Gift")
+rev_tax = st.number_input("Revenue Tax")
+rev_bank_fees = st.number_input("Revenue Bank Fees")
+price = st.number_input("Price")
+payment_value = st.number_input("Payment Value")
+customer_state = st.selectbox("Customer State", options=["State1", "State2"])  # Replace with actual states
 
-# User Input
-product_volume = st.number_input("Enter product volume:", min_value=0.0)
-payment_value = st.number_input("Enter payment value:", min_value=0.0)
-# Add additional inputs as needed based on your model's requirements
-
-# Convert user inputs to a DataFrame for prediction
+# Create a DataFrame for the input data
 input_data = pd.DataFrame({
     'product_volume': [product_volume],
+    'Duration_approved': [duration_approved],
+    'product_weight_g': [product_weight_g],
+    'REV_Tax_percent': [rev_tax_percent],
+    'Revenue': [revenue],
+    'REV_gift': [rev_gift],
+    'REV_Tax': [rev_tax],
+    'REV_Bank_fees': [rev_bank_fees],
+    'price': [price],
     'payment_value': [payment_value],
-    # Include any other input fields your model requires
+    'customer_state': [customer_state]
 })
 
-# Button to make predictions
-if st.button("Predict"):
-    # Make predictions
-    predicted_labels = make_predictions(input_data)
-    # Display predictions
-    st.write("Predicted Class Labels:")
-    st.write(predicted_labels)
+# Preprocess the input data
+processed_input = preprocess_input_data(input_data)
 
-    # Optionally, display in a structured format
-    df_predictions = pd.DataFrame({
-        'Prediction Index': range(len(predicted_labels)),
-        'Predicted Class': predicted_labels
-    })
+# Make predictions
+predictions = model.predict(processed_input)
 
-    st.table(df_predictions)
+# Map numerical predictions to class labels
+label_mapping = {0: 'L', 1: 'M', 2: 'S'}
+predicted_labels = [label_mapping[pred] for pred in predictions]
+
+# Display the predictions
+st.write("Predicted Order Status:")
+st.write(predicted_labels)
