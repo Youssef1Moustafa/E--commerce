@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 def load_label_encoder(encoder_path):
     try:
         with open(encoder_path, 'rb') as f:
-            return pickle.load(f)
+            return pickle.load(f)  # Ensure this returns a LabelEncoder instance
     except FileNotFoundError:
         st.error("Label encoder file not found. Please check the path.")
         st.stop()
@@ -36,6 +36,11 @@ def preprocess_input_data(input_data, label_encoder_customer_state):
 # Specify the path for the label encoder
 encoder_path = 'delivered_days.pkl'  # Update this path as necessary
 label_encoder_customer_state = load_label_encoder(encoder_path)
+
+# Ensure the loaded object is an instance of LabelEncoder
+if not isinstance(label_encoder_customer_state, LabelEncoder):
+    st.error("The loaded object is not a LabelEncoder.")
+    st.stop()
 
 # Streamlit UI elements
 st.title("E-commerce Prediction App")
