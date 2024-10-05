@@ -79,7 +79,7 @@ with st.form("feature_input_form"):
 
     # Feature 2: 'order_purchase_year', 'order_purchase_month', 'order_purchase_day'
     st.subheader('Order Details')
-    order_purchase_year = st.number_input("Order Purchase Year", min_value=2000, max_value=2023, value=2022)
+    order_purchase_year = st.number_input("Order Purchase Year", min_value=2017, max_value=2024, value=2017)
     order_purchase_month = st.number_input("Order Purchase Month", min_value=1, max_value=12, value=1)
     order_purchase_day = st.number_input("Order Purchase Day", min_value=1, max_value=31, value=1)
 
