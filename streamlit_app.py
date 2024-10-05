@@ -2,6 +2,7 @@ import os
 import streamlit as st
 import pickle
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
 
 # File path to your model and features
 file_path = 'delivered_days.pkl'
@@ -19,7 +20,7 @@ model = model_data['model']
 features = model_data['features']
 
 # Title of the page
-st.title("Delivered days Prediction")
+st.title("Delivered Days Prediction")
 
 # Create a sidebar navigation for feature input
 st.sidebar.title("Navigation")
@@ -57,7 +58,7 @@ city_mapping = {
 
 # Create a dictionary mapping product categories to category names
 product_mapping = {
-    'L': ['toys', 'watches_gifts', 'costruction_tools_garden'],
+    'L': ['toys', 'watches_gifts', 'construction_tools_garden'],
     'M': ['bed_bath_table', 'auto', 'health_beauty'],
     'S': ['cool_stuff', 'garden_tools', 'furniture_decor'],
     # Add more mappings...
@@ -121,6 +122,14 @@ with st.form("feature_input_form"):
 # Only proceed with prediction if the form is submitted
 if submitted:
     try:
+        # Encode categorical features
+        label_encoders = {}
+        for feature in ['customer_state', 'customer_city', 'product_category', 'product_category_name']:
+            le = LabelEncoder()
+            le.fit(input_data[feature])
+            input_data[feature] = le.transform([input_data[feature]])[0]
+            label_encoders[feature] = le
+
         # Convert the input dictionary to a 2D numpy array (required for prediction)
         input_array = np.array([list(input_data.values())])
 
