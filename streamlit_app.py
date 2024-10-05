@@ -28,14 +28,15 @@ st.sidebar.title("Navigation")
 city_mapping = {
     'SP': ['São Paulo', 'Campinas', 'Santo André'],
     'RJ': ['Rio de Janeiro', 'Niterói', 'Petropolis'],
-    # Add more states and cities as needed
+    'S': ['cool_stuff', 'garden_tools', 'furniture_decor'],
 }
 
 # Create a dictionary mapping product categories to category names
-   product_mapping = [
-    'L',
-    'M',
-    'S',]
+product_mapping = {
+    'L': ['toys', 'watches_gifts', 'construction_tools_garden'],
+    'M': ['bed_bath_table', 'auto', 'health_beauty'],
+    # Add more categories as needed
+}
 
 # A dictionary to store user input for each feature
 input_data = {}
