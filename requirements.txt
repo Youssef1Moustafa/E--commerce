@@ -1,6 +1,6 @@
-streamlit
-pandas
-xgboost
-scikit-learn
-Pickle
-imbalanced-learn
+streamlit>=1.0.0,<2.0.0
+scikit-learn>=0.24.0,<1.0.0
+xgboost>=1.0.0
+pandas>=1.0.0
+numpy>=1.0.0
+imbalanced-learn>=0.7.0
