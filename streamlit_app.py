@@ -2,14 +2,13 @@ import streamlit as st
 import pandas as pd
 import pickle
 
-# Define file paths
-model_file_path = 'oreder(1).pkl'  # Replace with your actual model filename
-encoder_file_path = 'encoder.pkl'  # Replace with your actual encoder filename
+# Define file path for the model
+file_path = 'oreder(1).pkl'  # Replace with your actual model filename
 
 # Load the trained model
 trained_model = None
 try:
-    with open(model_file_path, 'rb') as f:
+    with open(file_path, 'rb') as f:
         trained_model = pickle.load(f)
     if isinstance(trained_model, dict):
         trained_model = trained_model.get('model')
@@ -20,7 +19,7 @@ except FileNotFoundError:
 # Load the encoder
 encoder = None
 try:
-    with open(encoder_file_path, 'rb') as f:
+    with open('encoder.pkl', 'rb') as f:  # Keep this if you're using an encoder
         encoder = pickle.load(f)
     st.success("Encoder loaded successfully!")
 except FileNotFoundError:
