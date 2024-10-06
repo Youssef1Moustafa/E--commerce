@@ -4,6 +4,8 @@ import pickle
 
 # Load the trained model
 model_file_path = 'oreder(1).pkl'  # Replace with your actual model filename
+encoder_file_path = 'encoder.pkl'  # Replace with your actual encoder filename
+
 
 try:
     with open(model_file_path, 'rb') as f:
