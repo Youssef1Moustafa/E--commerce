@@ -2,9 +2,10 @@ import os
 import streamlit as st
 import pickle
 import numpy as np
+from sklearn.preprocessing import LabelEncoder
 
 # Load the model
-file_path = 'delivered_days.pkl'
+file_path = 'oreder (1).pkl'
 
 if os.path.exists(file_path):
     with open(file_path, 'rb') as file:
@@ -13,15 +14,14 @@ else:
     st.error(f"File {file_path} not found. Please ensure the file is in the correct location.")
     st.stop()
 
-# Extract the model, feature names, and label encoders
-trained_model = model_data['model']
-feature_names = model_data['features']
-label_encoders = model_data['label_encoders']
+# Extract the model and feature names
+model = model_data['model']
+features = model_data['features']
 
 # Title of the page
 st.title("Delivered Days Prediction")
 
-# Sidebar navigation for feature input
+# Create a sidebar navigation for feature input
 st.sidebar.title("Navigation")
 
 # Create a dictionary mapping states to cities
@@ -35,8 +35,7 @@ city_mapping = {
 product_mapping = {
     'L': ['toys', 'watches_gifts', 'construction_tools_garden'],
     'M': ['bed_bath_table', 'auto', 'health_beauty'],
-        'S': ['cool_stuff', 'garden_tools', 'furniture_decor'],
-
+    # Add more categories as needed
 }
 
 # A dictionary to store user input for each feature
@@ -100,17 +99,20 @@ if submitted:
         # Prepare input for prediction
         input_values = list(input_data.values())
 
-        # Transform categorical variables using the loaded LabelEncoders
-        for feature in ['customer_state', 'customer_city', 'product_category', 'product_category_name']:
-            if feature in feature_names:
-                index = feature_names.index(feature)
-                input_values[index] = label_encoders[feature].transform([input_data[feature]])[0]
+        # Apply Label Encoding on categorical inputs if needed
+        label_encoder = LabelEncoder()
 
-        # Convert input to a numpy array with the correct dtype
+        # Transform categorical variables
+        input_values[features.index('customer_state')] = label_encoder.fit_transform([input_data['customer_state']])[0]
+        input_values[features.index('customer_city')] = label_encoder.fit_transform([input_data['customer_city']])[0]
+        input_values[features.index('product_category')] = label_encoder.fit_transform([input_data['product_category']])[0]
+        input_values[features.index('product_category_name')] = label_encoder.fit_transform([input_data['product_category_name']])[0]
+
+        # Convert input to a numpy array with correct dtype
         input_array = np.array([input_values], dtype=float)
 
         # Make prediction
-        prediction = trained_model.predict(input_array)
+        prediction = model.predict(input_array)
 
         # Output prediction results
         st.success(f"Prediction: {'Order Delivered' if prediction[0] == 1 else 'Other Status'}")
