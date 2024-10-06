@@ -19,7 +19,7 @@ model = model_data['model']
 features = model_data['features']
 
 # Title of the page
-st.title("Delivered Days Prediction")
+st.title("Delivery Type Prediction")
 
 # Create a sidebar navigation for feature input
 st.sidebar.title("Navigation")
