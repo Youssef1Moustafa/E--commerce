@@ -1,87 +1,60 @@
-# Order Status Prediction App
+# E-Commerce Dashboard Project 🛒📊  
 
-This is a Streamlit-based web application that predicts the order status (e.g., delivered, shipped) using a machine learning model. The model takes several features such as customer state, city, product category, and purchase details to provide predictions.
+## Overview  
+This project showcases an **E-Commerce Dashboard**, built with **Power BI** for interactive visualizations and **Python** for data cleaning and preprocessing. The dashboard provides valuable insights into **sales trends, customer behavior, payment types, and financial metrics**, helping businesses make data-driven decisions.  
 
-## Features
+## Project Structure  
+The project is divided into **four key pages**, each focusing on different aspects of the business:  
 
-The application uses the following features for prediction:
+### **Page 1: Sales and Orders Overview**  
+- **Total Sales**, **Total Orders**, and **Total Sellers**.  
+- Offers a summary of overall platform performance.  
 
-- `customer_state`: State where the customer resides (e.g., NY, CA)
-- `customer_city`: City where the customer resides
-- `order_purchase_year`: Year when the order was purchased
-- `order_purchase_month`: Month of the purchase
-- `order_purchase_day`: Day of the purchase
-- `order_estimated_delivery_month`: Estimated month for delivery
-- `order_estimated_delivery_day`: Estimated day for delivery
-- `product_category`: Category of the product (e.g., Electronics, Apparel)
-- `product_category_name`: Name of the product category
-- `discount`: Discount applied to the order (in percentage)
-- `REV_gift_log`: Log of gift revenue for the order
-- `REV_gift_percent`: Percentage of revenue from gifts
-- `price_log`: Logarithmic value of the product's price
+### **Page 2: Payment and Financial Insights**  
+- **Total gift coupons, custom fees, bank fees, and taxes**.  
+- Zooms into **payment installments** and **payment types by year** for deeper financial analysis.  
 
-## How to Run the App
+### **Page 3: Sales by Quarter and Month**  
+- **Quarterly and monthly sales trends** to identify seasonality and revenue peaks.  
 
-### Prerequisites
+### **Page 4: Daily Sales with Calendar View**  
+- **Sales by calendar day** with filters for each month to uncover daily trends.  
 
-Make sure you have Python 3.x installed on your machine. You’ll also need the following Python libraries:
+## Technologies Used  
+- **Python**: Data cleaning and preprocessing.  
+- **Power BI**: Data visualization and dashboard creation.  
 
-- `streamlit`
-- `numpy`
-- `pickle`
-- `sklearn`
-- `pandas`
+## Key Features  
+- **Interactive dashboards** that allow filtering and deep-dives into key metrics.  
+- **Sales analysis by time periods** (quarterly, monthly, and daily).  
+- **Comprehensive payment insights**, including gift coupons and installment trends.  
 
-You can install the necessary libraries by running:
+## Setup Instructions  
+1. Clone this repository:  
+   ```bash
+   git clone <repository_url>
+   cd e-commerce-dashboard
+   ```
+2. Install the necessary Python libraries:  
+   ```bash
+   pip install pandas numpy matplotlib
+   ```
+3. Open **Power BI** and load the dataset from the repository.  
+4. Explore the Python code under the `/scripts` folder for data cleaning logic.
 
-```bash
-pip install streamlit numpy pickle5 scikit-learn pandas
-```
+## Dashboard Preview  
+![Screenshot 2024-10-13 221959](https://github.com/user-attachments/assets/c7391220-98bc-443c-9d0a-b4c715ca2214)
 
-### Clone the Repository
+## Contributors  
+- **Youssef Moustafa** (Project Lead)  
+- **Nada Moustafa** (Team Member)  
 
-First, clone this repository to your local machine:
+## Acknowledgments  
+Special thanks to my instructor **Ola El-shiekh** for her guidance throughout this project 🌟.  
 
-```bash
-git clone https://github.com/yourusername/order-status-prediction-app.git
-cd order-status-prediction-app
-```
+## License  
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.  
 
-### Running the App
-
-Make sure your machine learning model is saved as `model_features.pkl` and is located in the same directory as `app.py`. Then run the following command to launch the app:
-
-```bash
-streamlit run app.py
-```
-
-This will start a local web server and open the app in your browser.
-
-### Usage
-
-1. **Customer Information**: Input the customer’s state and city.
-2. **Order Details**: Input the purchase year, month, and day for the order.
-3. **Estimated Delivery**: Provide the estimated delivery month and day.
-4. **Product Information**: Choose the product category and provide the product category name.
-5. **Price & Discount**: Input the discount applied to the order, revenue from gifts (log), and the price (logarithmic scale).
-6. **Predict**: Click the `Predict` button to get the predicted order status.
-
-## File Structure
-
-- `app.py`: The main application file for Streamlit.
-- `model_features.pkl`: This file contains the trained machine learning model and the list of features.
-- `README.md`: Documentation for the project.
-
-## Model Training
-
-The machine learning model used in this app is trained using features like customer state, city, order dates, product categories, discount, and price details. The model is saved in a `pickle` file (`model_features.pkl`), which is loaded at runtime.
-
-## Example
-
-Below is an example of the interface, where you can input feature values and predict whether an order will be delivered or not:
-
-![Screenshot of the app](example_screenshot.png)
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+## Contact  
+- **LinkedIn**: [Youssef Moustafa](https://www.linkedin.com/in/youssef-moustafa-b60807225)  
+- **Portfolio**: [Youssef's Portfolio](https://youssefmoustafa172.wixsite.com/youssef-moustafa)  
